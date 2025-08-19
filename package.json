@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server/index.js",
+    "start:prod": "cross-env NODE_ENV=production node server/index.js",
     "dev": "node --watch server/index.js",
     "lint": "eslint .",
     "format": "prettier --write .",

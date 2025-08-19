@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Status | Smart Hostel System</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .status-card { 
+            background: rgba(255,255,255,0.1); 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 10px; 
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+        .status-icon { 
+            font-size: 3em; 
+            margin-bottom: 20px;
+        }
+        .success { 
+            color: #4CAF50; 
+        }
+        .error { 
+            color: #f44336; 
+        }
+        .warning { 
+            color: #ff9800; 
+        }
+        .status-text { 
+            font-size: 1.5em; 
+            margin-bottom: 10px;
+        }
+        .details { 
+            font-size: 1em; 
+            opacity: 0.9;
+        }
+        .quick-links { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 15px; 
+            margin-top: 30px;
+        }
+        .link-card { 
+            background: rgba(255,255,255,0.1); 
+            padding: 15px; 
+            border-radius: 8px; 
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .link-card:hover { 
+            transform: translateY(-5px);
+        }
+        .link-card a { 
+            color: white; 
+            text-decoration: none; 
+            font-weight: bold;
+        }
+        h1 { 
+            text-align: center; 
+            margin-bottom: 30px;
+        }
+        .refresh-btn { 
+            background: #4CAF50; 
+            color: white; 
+            padding: 12px 24px; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 1.1em;
+            margin: 20px auto;
+            display: block;
+        }
+        .refresh-btn:hover { 
+            background: #45a049; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Smart Hostel System - Status Check</h1>
+    
+    <div class="status-card">
+        <div class="status-icon" id="serverIcon">⏳</div>
+        <div class="status-text" id="serverStatus">Checking Server Status...</div>
+        <div class="details" id="serverDetails">Verifying connection...</div>
+    </div>
+
+    <div class="status-card">
+        <div class="status-icon" id="databaseIcon">⏳</div>
+        <div class="status-text" id="databaseStatus">Checking Database...</div>
+        <div class="details" id="databaseDetails">Verifying data access...</div>
+    </div>
+
+    <div class="status-card">
+        <div class="status-icon" id="authIcon">⏳</div>
+        <div class="status-text" id="authStatus">Checking Authentication...</div>
+        <div class="details" id="authDetails">Verifying login system...</div>
+    </div>
+
+    <button class="refresh-btn" onclick="checkAllStatus()">🔄 Refresh Status</button>
+
+    <div class="quick-links">
+        <div class="link-card">
+            <a href="home1.html">🏠 Homepage</a>
+        </div>
+        <div class="link-card">
+            <a href="explore.html">🔍 Explore Hostels</a>
+        </div>
+        <div class="link-card">
+            <a href="host-onboarding.html">📱 Add Hostel</a>
+        </div>
+        <div class="link-card">
+            <a href="admin.html">🔑 Admin Panel</a>
+        </div>
+        <div class="link-card">
+            <a href="dashboard.html">📊 User Dashboard</a>
+        </div>
+        <div class="link-card">
+            <a href="test-system.html">🧪 System Test</a>
+        </div>
+    </div>
+
+    <div class="status-card">
+        <h3>🔑 Default Admin Access</h3>
+        <p><strong>Email:</strong> admin@hostel.com</p>
+        <p><strong>Password:</strong> password</p>
+    </div>
+
+    <script>
+        // Check server health
+        async function checkServerHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('serverIcon').innerHTML = '✅';
+                    document.getElementById('serverIcon').className = 'status-icon success';
+                    document.getElementById('serverStatus').innerHTML = 'Server Running';
+                    document.getElementById('serverDetails').innerHTML = `Port: 8080 | Status: ${response.status} | Response: ${JSON.stringify(data)}`;
+                } else {
+                    document.getElementById('serverIcon').innerHTML = '❌';
+                    document.getElementById('serverIcon').className = 'status-icon error';
+                    document.getElementById('serverStatus').innerHTML = 'Server Error';
+                    document.getElementById('serverDetails').innerHTML = `Status: ${response.status}`;
+                }
+            } catch (error) {
+                document.getElementById('serverIcon').innerHTML = '❌';
+                document.getElementById('serverIcon').className = 'status-icon error';
+                document.getElementById('serverStatus').innerHTML = 'Server Unreachable';
+                document.getElementById('serverDetails').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Check database
+        async function checkDatabase() {
+            try {
+                const response = await fetch('/api/listings');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('databaseIcon').innerHTML = '✅';
+                    document.getElementById('databaseIcon').className = 'status-icon success';
+                    document.getElementById('databaseStatus').innerHTML = 'Database Connected';
+                    document.getElementById('databaseDetails').innerHTML = `Found ${data.listings.length} listings | Status: ${response.status}`;
+                } else {
+                    document.getElementById('databaseIcon').innerHTML = '❌';
+                    document.getElementById('databaseIcon').className = 'status-icon error';
+                    document.getElementById('databaseStatus').innerHTML = 'Database Error';
+                    document.getElementById('databaseDetails').innerHTML = `Status: ${response.status}`;
+                }
+            } catch (error) {
+                document.getElementById('databaseIcon').innerHTML = '❌';
+                document.getElementById('databaseIcon').className = 'status-icon error';
+                document.getElementById('databaseStatus').innerHTML = 'Database Unreachable';
+                document.getElementById('databaseDetails').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Check authentication
+        async function checkAuthentication() {
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@hostel.com',
+                        password: 'password'
+                    })
+                });
+                
+                if (response.ok) {
+                    document.getElementById('authIcon').innerHTML = '✅';
+                    document.getElementById('authIcon').className = 'status-icon success';
+                    document.getElementById('authStatus').innerHTML = 'Authentication Working';
+                    document.getElementById('authDetails').innerHTML = 'Admin login successful | JWT token received';
+                } else {
+                    document.getElementById('authIcon').innerHTML = '⚠️';
+                    document.getElementById('authIcon').className = 'status-icon warning';
+                    document.getElementById('authStatus').innerHTML = 'Authentication Limited';
+                    document.getElementById('authDetails').innerHTML = 'Login system accessible but may have issues';
+                }
+            } catch (error) {
+                document.getElementById('authIcon').innerHTML = '❌';
+                document.getElementById('authIcon').className = 'status-icon error';
+                document.getElementById('authStatus').innerHTML = 'Authentication Error';
+                document.getElementById('authDetails').innerHTML = `Error: ${error.message}`;
+            }
+        }
+
+        // Check all status
+        async function checkAllStatus() {
+            await checkServerHealth();
+            await checkDatabase();
+            await checkAuthentication();
+        }
+
+        // Auto-check on page load
+        window.onload = function() {
+            checkAllStatus();
+        };
+    </script>
+</body>
+</html>

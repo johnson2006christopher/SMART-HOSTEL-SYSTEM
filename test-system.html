@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Test | Smart Hostel System</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            max-width: 800px; 
+            margin: 50px auto; 
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .test-section { 
+            background: rgba(255,255,255,0.1); 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-radius: 10px; 
+            backdrop-filter: blur(10px);
+        }
+        .test-button { 
+            background: #4CAF50; 
+            color: white; 
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            margin: 5px;
+        }
+        .test-button:hover { 
+            background: #45a049; 
+        }
+        .result { 
+            background: rgba(0,0,0,0.3); 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success { 
+            border-left: 4px solid #4CAF50; 
+        }
+        .error { 
+            border-left: 4px solid #f44336; 
+        }
+        h1, h2 { 
+            text-align: center; 
+        }
+        .status { 
+            text-align: center; 
+            font-size: 1.2em; 
+            margin: 20px 0; 
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Smart Hostel System - System Test</h1>
+    
+    <div class="status" id="serverStatus">
+        🔴 Server Status: Checking...
+    </div>
+
+    <div class="test-section">
+        <h2>🌐 Server Health Check</h2>
+        <button class="test-button" onclick="testHealth()">Test Server Health</button>
+        <div id="healthResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Listings API Test</h2>
+        <button class="test-button" onclick="testListings()">Test Listings API</button>
+        <div id="listingsResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔐 Authentication Test</h2>
+        <button class="test-button" onclick="testAuth()">Test Registration</button>
+        <button class="test-button" onclick="testLogin()">Test Login</button>
+        <div id="authResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📱 Page Navigation Test</h2>
+        <button class="test-button" onclick="window.open('home1.html', '_blank')">Open Homepage</button>
+        <button class="test-button" onclick="window.open('explore.html', '_blank')">Open Explore</button>
+        <button class="test-button" onclick="window.open('host-onboarding.html', '_blank')">Open Host Onboarding</button>
+        <button class="test-button" onclick="window.open('admin.html', '_blank')">Open Admin Panel</button>
+        <button class="test-button" onclick="window.open('dashboard.html', '_blank')">Open Dashboard</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Quick Access Links</h2>
+        <p><strong>Main Site:</strong> <a href="home1.html" style="color: #fff;">http://localhost:8080/home1.html</a></p>
+        <p><strong>Browse Hostels:</strong> <a href="explore.html" style="color: #fff;">http://localhost:8080/explore.html</a></p>
+        <p><strong>Add Hostel:</strong> <a href="host-onboarding.html" style="color: #fff;">http://localhost:8080/host-onboarding.html</a></p>
+        <p><strong>Admin Panel:</strong> <a href="admin.html" style="color: #fff;">http://localhost:8080/admin.html</a></p>
+        <p><strong>User Dashboard:</strong> <a href="dashboard.html" style="color: #fff;">http://localhost:8080/dashboard.html</a></p>
+    </div>
+
+    <div class="test-section">
+        <h2>🔑 Default Admin Access</h2>
+        <p><strong>Email:</strong> admin@hostel.com</p>
+        <p><strong>Password:</strong> password</p>
+    </div>
+
+    <script>
+        // Test server health
+        async function testHealth() {
+            const result = document.getElementById('healthResult');
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                if (response.ok) {
+                    result.innerHTML = `✅ Server is healthy!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                    result.className = 'result success';
+                    document.getElementById('serverStatus').innerHTML = '🟢 Server Status: Running';
+                    document.getElementById('serverStatus').style.color = '#4CAF50';
+                } else {
+                    result.innerHTML = `❌ Server error!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Network error: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        // Test listings API
+        async function testListings() {
+            const result = document.getElementById('listingsResult');
+            try {
+                const response = await fetch('/api/listings');
+                const data = await response.json();
+                if (response.ok) {
+                    result.innerHTML = `✅ Listings API working!\nFound ${data.listings.length} listings\nFirst listing: ${data.listings[0]?.title || 'None'}`;
+                    result.className = 'result success';
+                } else {
+                    result.innerHTML = `❌ Listings API error!\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Network error: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        // Test authentication
+        async function testAuth() {
+            const result = document.getElementById('authResult');
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        first_name: 'Test',
+                        last_name: 'User',
+                        email: 'test@example.com',
+                        password: 'testpass123'
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    result.innerHTML = `✅ Registration working!\nUser created: ${data.user.first_name} ${data.user.last_name}`;
+                    result.className = 'result success';
+                } else {
+                    result.innerHTML = `⚠️ Registration response: ${data.error || 'Unknown error'}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Network error: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        // Test login
+        async function testLogin() {
+            const result = document.getElementById('authResult');
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'admin@hostel.com',
+                        password: 'password'
+                    })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    result.innerHTML = `✅ Login working!\nAdmin login successful\nToken received: ${data.token ? 'Yes' : 'No'}`;
+                    result.className = 'result success';
+                } else {
+                    result.innerHTML = `❌ Login failed: ${data.error || 'Unknown error'}`;
+                    result.className = 'result error';
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Network error: ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+
+        // Auto-test on page load
+        window.onload = function() {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
